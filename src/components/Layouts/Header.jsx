@@ -1,6 +1,6 @@
-import { href, Navigate, NavLink } from "react-router-dom";
+import {  NavLink } from "react-router-dom";
 import im1 from "../../images/WhatsApp_Image_2024-12-07_at_00.22.51_1855fad0-removebg-preview.png";
-import React, { useState } from "react";
+import  { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
@@ -31,7 +31,7 @@ const Header = () => {
             className="w-12 h-12 object-cover rounded-full mr-2"
           />
           <span className="text-2xl font-bold m-0 animate-fade-in-down transition-colors duration-200 relative hidden sm:inline-block after:absolute after:left-0 after:-bottom-1 after:w-full after:h-0.5 after:bg-blue-500 after:scale-x-0 after:transition-transform after:duration-300 hover:after:scale-x-100 hover:text-blue-600 ">
-            JD Products
+            JD Port
           </span>
         </div>
         {/* Desktop Nav */}

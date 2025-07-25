@@ -25,10 +25,10 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Login />, // Login page is public
+      element: <Login />, 
     },
     {
-      element: <RequireAuth />, // All below are protected
+      element: <RequireAuth />, 
       children: [
         {
           path: "/",
