@@ -1,27 +1,27 @@
-import {  NavLink } from "react-router-dom";
+
+import { href, NavLink } from "react-router-dom";
 import im1 from "../../images/WhatsApp_Image_2024-12-07_at_00.22.51_1855fad0-removebg-preview.png";
-import  { useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const navLinks = [
   { name: "Home", href: "/home" },
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
-  {name : "Movies" ,href:"/movies"},
- 
+  { name: "Movies", href: "/movies" },
+  { name: "service", href: "/service" },
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const removeToken =()=>{
-    localStorage.removeItem( "isAuthenticated");
+  const removeToken = () => {
+    localStorage.removeItem("isAuthenticated");
     window.location.reload();
- 
-  }
+  };
 
   return (
-    <header className="bg-gray-900 text-white shadow sticky top-0 z-50">
+    <header className="text-white shadow sticky top-0 z-50 backdrop-blur-md bg-white/10">
       <div className="flex items-center justify-between px-4 md:px-8 py-4 max-w-7xl mx-auto">
         {/* Logo */}
         <div className="flex items-center">
@@ -52,11 +52,15 @@ const Header = () => {
           ))}
           
         </nav>
-          <NavLink to={"/"}>
-        <button className="tetx-bold pt-2 pb-2 pl-3 pr-3  font-semibold font-mono rounded-xl bg-red-600 hover:bg-red-800 cursor-pointer " onClick={removeToken}>Logout </button>
-          </NavLink>
-        
-          
+        <NavLink to={"/"}>
+          <button
+            className="tetx-bold pt-2 pb-2 pl-3 pr-3  font-semibold font-mono rounded-xl bg-red-600 hover:bg-red-800 cursor-pointer "
+            onClick={removeToken}
+          >
+            Logout{" "}
+          </button>
+        </NavLink>
+
         {/* Hamburger for Mobile */}
         <button
           className="md:hidden flex flex-col justify-center items-center w-10 h-10 focus:outline-none"
@@ -90,7 +94,7 @@ const Header = () => {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-gray-900 px-4 pb-4"
+            className="md:hidden px-4 pb-4"
           >
             <ul className="flex flex-col space-y-2">
               {navLinks.map((link) => (

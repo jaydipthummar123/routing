@@ -3,12 +3,12 @@ import { motion } from "framer-motion";
 
 const Contectus = () => {
   return (
-    <main className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-10">
+    <main className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-10">
       <motion.section
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
-        className="w-full max-w-3xl bg-gray-800 bg-opacity-90 rounded-xl shadow-lg p-8 text-center"
+        className="w-full max-w-3xl rounded-xl shadow-lg p-8 text-center"
       >
         <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-6">
           Contact Us
@@ -20,7 +20,7 @@ const Contectus = () => {
         <div className="flex flex-col md:flex-row gap-8 justify-center items-center mb-8">
           <motion.div
             whileHover={{ scale: 1.03 }}
-            className="flex-1 bg-gray-900 rounded-lg p-6 shadow border border-blue-800 text-left"
+            className="flex-1 rounded-lg p-6 shadow border border-blue-800 text-left"
           >
             <h2 className="text-xl font-bold text-blue-400 mb-2">
               Contact Details
@@ -50,7 +50,7 @@ const Contectus = () => {
           </motion.div>
           <motion.div
             whileHover={{ scale: 1.03 }}
-            className="flex-1 bg-gray-900 rounded-lg p-6 shadow border border-blue-800"
+            className="flex-1 rounded-lg p-6 shadow border border-blue-800"
           >
             <h2 className="text-xl font-bold text-blue-400 mb-2">Location</h2>
             <div className="rounded-lg overflow-hidden border border-blue-700 shadow-lg">

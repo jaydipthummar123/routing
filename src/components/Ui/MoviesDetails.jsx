@@ -6,7 +6,7 @@ const MoviesDetails = () => {
   const movieDetail = useLoaderData();
 
   return (
-    <div className="flex flex-col md:flex-row items-center bg-gray-900 justify-center min-h-screen  p-4">
+    <div className="flex flex-col md:flex-row items-center  justify-center min-h-screen  p-4">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}

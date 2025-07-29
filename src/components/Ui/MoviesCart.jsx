@@ -26,7 +26,7 @@ const MoviesCart = ({ movie }) => {
           Year: {movie.Year|| "N/A"}
         </div>
         <NavLink to={`/movies/${movie.imdbID}`}>
-<button className="w-full text-white  p-2 rounded-xl mt-2 bg-blue-600 cursor-pointer "> Watch Now</button>
+<button className="w-full text-white  p-2 rounded-xl mt-2 bg-blue-600 cursor-pointer"> Watch Now</button>
         </NavLink>
         
       </div>

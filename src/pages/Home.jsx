@@ -2,6 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import heroImg from "../images/WhatsApp_Image_2024-12-07_at_00.22.51_1855fad0-removebg-preview.png";
 import reactLogo from "../assets/react.svg";
+import Lightning from "../components/Animation/Lightning";
 
 // Fake project images from Unsplash
 const projectImages = [
@@ -70,7 +71,8 @@ const stats = [
 
 const Home = () => {
   return (
-    <main className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-10">
+    <main className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-10">
+    
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row items-center gap-10 w-full max-w-5xl">
         {/* Animated Image */}

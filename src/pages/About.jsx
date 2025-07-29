@@ -5,7 +5,7 @@ import reactLogo from "../assets/react.svg";
 
 const About = () => {
   return (
-    <main className="flex flex-col items-center justify-center min-h-[70vh] bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4 py-10">
+    <main className="flex flex-col items-center justify-center min-h-[70vh] px-4 py-10">
       {/* Hero Section */}
       <div className="flex flex-col md:flex-row items-center gap-10 w-full max-w-5xl">
         {/* Animated Image */}
@@ -48,7 +48,7 @@ const About = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.2 }}
-        className="mt-16 w-full max-w-4xl bg-gray-800 bg-opacity-80 rounded-xl shadow-lg p-8 text-center"
+        className="mt-16 w-full max-w-4xl rounded-xl shadow-lg p-8 text-center"
       >
         <h2 className="text-2xl md:text-3xl font-bold text-blue-300 mb-4">
           Our Mission
@@ -73,7 +73,7 @@ const About = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.8, delay: 0.4 }}
-        className="mt-10 w-full max-w-3xl bg-gray-900 bg-opacity-90 rounded-xl shadow-lg p-8 text-center"
+        className="mt-10 w-full max-w-3xl rounded-xl shadow-lg p-8 text-center"
       >
         <h2 className="text-2xl md:text-3xl font-bold text-blue-400 mb-6">
           Our Journey

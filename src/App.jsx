@@ -15,6 +15,7 @@ import Movies from "./pages/Movies";
 import getMovies from "./api/getMovies";
 import MoviesDetails from "./components/Ui/MoviesDetails";
 import GetMoviesdetails from "./api/GetMoviesdetails";
+import Service from "./pages/Service";
 
 function RequireAuth() {
   const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
@@ -60,8 +61,12 @@ function App() {
         },
       ],
     },
+       {
+        path:"/service",
+        element:<Service/>
+       }
   ]);
-
+ 
   return <RouterProvider router={router}></RouterProvider>;
 }
 

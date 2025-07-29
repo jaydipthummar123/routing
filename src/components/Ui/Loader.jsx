@@ -12,7 +12,7 @@ const bounceTransition = {
 
 const Loader = () => {
   return (
-    <div className="h-screen w-full flex items-center justify-center bg-gray-900">
+    <div className="h-screen w-full flex items-center  bg-blue-950 justify-center ">
       <div className="flex space-x-2">
         <motion.span
           className="w-4 h-4 bg-white rounded-full"
