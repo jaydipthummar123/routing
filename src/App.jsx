@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useContext, useState } from "react";
 import "./App.css";
 import {
   createBrowserRouter,
@@ -10,23 +11,32 @@ import AppLayout from "./components/Layouts/AppLayout";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Contectus from "./pages/Contectus";
-import Login from "./pages/Login";
+
 import Movies from "./pages/Movies";
 import getMovies from "./api/getMovies";
 import MoviesDetails from "./components/Ui/MoviesDetails";
 import GetMoviesdetails from "./api/GetMoviesdetails";
 import Service from "./pages/Service";
+import Loader from "./components/Ui/Loader";
+
+import LoginPage from "./pages/AuthPage";
+import { AuthContext } from "./context/AuthContext";
 
 function RequireAuth() {
-  const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
-  return isAuthenticated ? <Outlet /> : <Navigate to="/" replace />;
+  const { user, loding } = useContext(AuthContext);
+
+  if (loding) {
+    return <Loader/>
+  }
+
+  return user ? <Outlet /> : <Navigate to="/" replace />;
 }
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <Login />, 
+      element: <AuthPage />, 
     },
     {
       element: <RequireAuth />, 

@@ -1,9 +1,10 @@
 import React from 'react'
+import UnderConstructionPage from './UnderConstructionPage '
 
 const Service = () => {
   return (
     <div>
-         this the service page 
+     <UnderConstructionPage></UnderConstructionPage>
     </div>
   )
 }
