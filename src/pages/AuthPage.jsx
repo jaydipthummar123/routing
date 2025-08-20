@@ -62,15 +62,12 @@ const AuthPage = () => {
   const handleRegisterSubmit = (values, { setSubmitting, resetForm }) => {
     setSubmitting(true);
     console.log("Register Form Values:", values);
-    
-    // Remove confirmPassword from the values before sending to API
     const { confirmPassword, ...registrationData } = values;
-    
     Register(registrationData)
       .then(() => {
         toast.success("Registration successful! Please sign in.");
         resetForm();
-        setIsLogin(true); // Switch to login form after successful registration
+        setIsLogin(true); 
       })
       .catch((error) => {
         console.error("Registration Error:", error);
@@ -106,7 +103,7 @@ const AuthPage = () => {
       </div>
 
       {/* Auth Form */}
-      <motion.div 
+      <motion.div
         key={isLogin ? "login" : "register"}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -117,10 +114,9 @@ const AuthPage = () => {
           {isLogin ? "Sign In" : "Sign Up"}
         </h1>
         <p className="text-sm text-white mb-8">
-          {isLogin 
-            ? "Enter your username and password to sign in!" 
-            : "Create your account to get started!"
-          }
+          {isLogin
+            ? "Enter your username and password to sign in!"
+            : "Create your account to get started!"}
         </p>
 
         {isLogin ? (
@@ -299,7 +295,7 @@ const AuthPage = () => {
           </p>
         </div>
       </motion.div>
-      
+
       <ToastContainer />
     </div>
   );

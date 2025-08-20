@@ -1,8 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
+
 import heroImg from "../images/WhatsApp_Image_2024-12-07_at_00.22.51_1855fad0-removebg-preview.png";
-import reactLogo from "../assets/react.svg";
-import Lightning from "../components/Animation/Lightning";
+ import { motion } from "framer-motion";
 
 // Fake project images from Unsplash
 const projectImages = [
@@ -149,7 +147,7 @@ const Home = () => {
           Featured Projects
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {projectImages.map((project, idx) => (
+          {projectImages.map((project) => (
             <motion.div
               key={project.title}
               whileHover={{
@@ -198,7 +196,7 @@ const Home = () => {
           What Our Clients Say
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((t, idx) => (
+          {testimonials.map((t) => (
             <motion.div
               key={t.name}
               whileHover={{ scale: 1.04 }}

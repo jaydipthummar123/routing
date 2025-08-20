@@ -1,4 +1,3 @@
-
 import { href, NavLink } from "react-router-dom";
 import im1 from "../../images/WhatsApp_Image_2024-12-07_at_00.22.51_1855fad0-removebg-preview.png";
 import { useContext, useState } from "react";
@@ -10,7 +9,8 @@ const navLinks = [
   { name: "About", href: "/about" },
   { name: "Contact", href: "/contact" },
   { name: "Movies", href: "/movies" },
-  { name: "service", href: "/service" },
+  { name: "Service", href: "/service" },
+  { name: "User Tab", href: "/usertab" },
 ];
 
 const Header = () => {
@@ -21,7 +21,9 @@ const Header = () => {
   // Function to get user initials as fallback avatar
   const getUserInitials = (user) => {
     if (user?.firstName && user?.lastName) {
-      return `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase();
+      return `${user.firstName.charAt(0)}${user.lastName.charAt(
+        0
+      )}`.toUpperCase();
     } else if (user?.username) {
       return user.username.charAt(0).toUpperCase();
     } else if (user?.email) {
@@ -66,7 +68,6 @@ const Header = () => {
               {link.name}
             </NavLink>
           ))}
-          
         </nav>
 
         {/* User Section */}
@@ -155,7 +156,9 @@ const Header = () => {
             <span
               className="block w-6 h-0.5 bg-white rounded transition-all duration-300"
               style={{
-                transform: menuOpen ? "rotate(-45deg) translateY(-7px)" : "none",
+                transform: menuOpen
+                  ? "rotate(-45deg) translateY(-7px)"
+                  : "none",
               }}
             ></span>
           </button>

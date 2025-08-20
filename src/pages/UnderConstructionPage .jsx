@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import Lightning from "../components/Animation/Lightning"; // Assuming you want to keep the lightning background
+import Lightning from "../components/Animation/Lightning"; 
 
 const UnderConstructionPage = () => {
   const navigate = useNavigate();
@@ -124,7 +124,7 @@ const UnderConstructionPage = () => {
             We're Building Something Amazing!
           </h2>
           
-          <p className="text-lg text-gray-200 mb-8 leading-relaxed">
+                    <p className="text-lg text-gray-200 mb-8 leading-relaxed">
             This page is currently under development. Our team is working hard to bring you 
             an incredible experience. Please check back soon for exciting updates!
           </p>
@@ -140,7 +140,7 @@ const UnderConstructionPage = () => {
                 initial={{ width: "0%" }}
                 animate={{ width: "75%" }}
                 transition={{ duration: 2, delay: 1 }}
-                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full relative"
+                className="bg-gradient-to-r from-yellow-400 to-orange-500 h-3 rounded-full relative"f
               >
                 <motion.div
                   animate={{
