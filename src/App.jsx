@@ -48,10 +48,10 @@ function App() {
           path: "/",
           element: <AppLayout />,
           children: [
-            { path: "home", element: <Home /> },
-            { path: "about", element: <About /> },
-            { path: "contact", element: <Contectus /> },
-            { path: "movies", element: <Movies />, loader: getMovies },
+            { path: "home", element: <Home/> },
+            { path: "about", element: <About/> },
+            { path: "contact", element: <Contectus/> },
+            { path: "movies", element: <Movies/>, loader: getMovies },
             {
               path: "movies/:moviesId",
               element: <MoviesDetails />,

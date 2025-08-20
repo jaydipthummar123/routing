@@ -8,6 +8,10 @@ import {
   Mail,
   Calendar,
   DollarSign,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from "lucide-react";
 import Modal from "../components/Ui/Modal";
 import FormField from "../components/Ui/FormField";
@@ -30,6 +34,10 @@ const UserTab = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [usersPerPage, setUsersPerPage] = useState(10);
 
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
   useEffect(() => {
@@ -42,9 +50,51 @@ const UserTab = () => {
       await dispatch(deleteUser(currentUser.id)).unwrap();
       toast.success("User deleted successfully!");
       setShowDeleteModal(false);
+      
+      // Adjust current page if necessary after deletion
+      const totalPages = Math.ceil((users.length - 1) / usersPerPage);
+      if (currentPage > totalPages && totalPages > 0) {
+        setCurrentPage(totalPages);
+      }
     } catch (error) {
       toast.error(error || "Failed to delete user!");
     }
+  };
+
+  // Calculate pagination
+  const totalUsers = users.length;
+  const totalPages = Math.ceil(totalUsers / usersPerPage);
+  const indexOfLastUser = currentPage * usersPerPage;
+  const indexOfFirstUser = indexOfLastUser - usersPerPage;
+  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+  // Pagination handlers
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handlePerPageChange = (newPerPage) => {
+    setUsersPerPage(newPerPage);
+    setCurrentPage(1); // Reset to first page when changing items per page
+  };
+
+  const goToFirstPage = () => setCurrentPage(1);
+  const goToLastPage = () => setCurrentPage(totalPages);
+  const goToPrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
+  const goToNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
+
+  // Generate page numbers for pagination
+  const getPageNumbers = () => {
+    const delta = 2;
+    const pages = [];
+    const rangeStart = Math.max(1, currentPage - delta);
+    const rangeEnd = Math.min(totalPages, currentPage + delta);
+
+    for (let i = rangeStart; i <= rangeEnd; i++) {
+      pages.push(i);
+    }
+
+    return pages;
   };
 
   return (
@@ -265,6 +315,28 @@ const UserTab = () => {
           transform: translateY(-5px) rotate(1deg);
           box-shadow: 0 15px 30px rgba(59, 130, 246, 0.2);
         }
+
+        .pagination-button {
+          transition: all 0.2s ease;
+          border: 1px solid rgba(59, 130, 246, 0.2);
+        }
+
+        .pagination-button:hover:not(:disabled) {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .pagination-button:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        .pagination-button.active {
+          background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
       `}</style>
 
       <div className="min-h-screen p-6">
@@ -311,10 +383,10 @@ const UserTab = () => {
                 },
                 {
                   label: "Avg Salary",
-                  value: `$${(
+                  value: users.length > 0 ? `$${(
                     users.reduce((acc, u) => acc + parseFloat(u.salary), 0) /
                     users.length
-                  ).toFixed(2)}`,
+                  ).toFixed(2)}` : '$0.00',
                   icon: DollarSign,
                   color: "green",
                 },
@@ -346,13 +418,32 @@ const UserTab = () => {
           <div className="w-full max-w-7xl mx-auto  rounded-lg shadow-lg overflow-hidden">
             {/* Table Header */}
             <div className="px-6 py-4 border-b stat-hed border-gray-100 animate-scaleIn ">
-              <div className="flex items-center gap-3">
-                <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
-                <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
-                <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                <span className="ml-4 text-2xl font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ">
-                  User Database
-                </span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                  <span className="ml-4 text-2xl font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ">
+                    User Database
+                  </span>
+                </div>
+                
+                {/* Items per page selector */}
+                <div className="flex items-center gap-2">
+                  <label className="text-sm text-gray-600">Show:</label>
+                  <select
+                    value={usersPerPage}
+                    onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                    className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={25}>25</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                  </select>
+                  <span className="text-sm text-gray-600">entries</span>
+                </div>
               </div>
             </div>
 
@@ -406,106 +497,203 @@ const UserTab = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {users.map((user, index) => (
-                    <tr key={user.id} className="stat-bd duration-200">
-                      <td className="w-20 px-4 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                          #{user.id}
-                        </span>
-                      </td>
-                      <td className="w-48 px-4 py-4">
-                        <div className="flex items-center">
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold mr-3 flex-shrink-0">
-                            {user.name.charAt(0)}
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <div className="text-sm font-medium text-white truncate">
-                              {user.name}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="w-56 px-4 py-4">
-                        <div className="flex items-center text-sm text-white">
-                          <Mail
-                            size={14}
-                            className="mr-2 text-white flex-shrink-0"
-                          />
-                          <span className="truncate">{user.email}</span>
-                        </div>
-                      </td>
-                      <td className="w-24 px-4 py-4">
-                        <span
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium ${
-                            user.gender === "Male"
-                              ? "bg-blue-100 text-blue-800"
-                              : user.gender === "Female"
-                              ? "bg-pink-100 text-pink-800"
-                              : "bg-purple-100 text-purple-800"
-                          }`}
-                        >
-                          {user.gender}
-                        </span>
-                      </td>
-                      <td className="w-32 px-4 py-4">
-                        <div className="flex items-center text-sm text-white">
-                          <Calendar
-                            size={14}
-                            className="mr-2 text-white flex-shrink-0"
-                          />
-                          <span>{formatDate(user.date_of_birth)}</span>
-                        </div>
-                      </td>
-                      <td className="w-28 px-4 py-4">
-                        <div className="flex items-center">
-                          <DollarSign
-                            size={14}
-                            className="mr-1 text-green-500 flex-shrink-0"
-                          />
-                          <span className="text-sm font-semibold text-green-600">
-                            ${user.salary}
-                          </span>
-                        </div>
-                      </td>
-                      <td className="w-32 px-4 py-4">
-                        <span className="text-sm text-white">
-                          {formatDate(user.created_at)}
-                        </span>
-                      </td>
-                      <td className="w-32 px-4 py-4">
-                        <div className="flex space-x-2">
-                          <button
-                            onClick={() => {
-                              setCurrentUser(user);
-                              setShowEditModal(true);
-                            }}
-                            className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white p-2 rounded-lg cursor-pointer shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-105"
-                            title="Edit User"
-                          >
-                            <Edit size={16} />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setCurrentUser(user);
-                              setShowDeleteModal(true);
-                            }}
-                            className="bg-gradient-to-r cursor-pointer from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white p-2 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-105"
-                            title="Delete User"
-                          >
-                            <Trash2 size={16} />
-                          </button>
+                  {currentUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-12 text-center stat-bd">
+                        <div className="flex flex-col items-center">
+                          <User className="w-12 h-12 text-gray-400 mb-4" />
+                          <p className="text-lg text-gray-500 mb-2">No users found</p>
+                          <p className="text-sm text-gray-400">Start by creating your first user</p>
                         </div>
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    currentUsers.map((user, index) => (
+                      <tr key={user.id} className="stat-bd duration-200">
+                        <td className="w-20 px-4 py-4">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            #{user.id}
+                          </span>
+                        </td>
+                        <td className="w-48 px-4 py-4">
+                          <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold mr-3 flex-shrink-0">
+                              {user.name.charAt(0)}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="text-sm font-medium text-white truncate">
+                                {user.name}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="w-56 px-4 py-4">
+                          <div className="flex items-center text-sm text-white">
+                            <Mail
+                              size={14}
+                              className="mr-2 text-white flex-shrink-0"
+                            />
+                            <span className="truncate">{user.email}</span>
+                          </div>
+                        </td>
+                        <td className="w-24 px-4 py-4">
+                          <span
+                            className={`inline-flex items-center px-2.5 py-0.5 rounded text-xs font-medium ${
+                              user.gender === "Male"
+                                ? "bg-blue-100 text-blue-800"
+                                : user.gender === "Female"
+                                ? "bg-pink-100 text-pink-800"
+                                : "bg-purple-100 text-purple-800"
+                            }`}
+                          >
+                            {user.gender}
+                          </span>
+                        </td>
+                        <td className="w-32 px-4 py-4">
+                          <div className="flex items-center text-sm text-white">
+                            <Calendar
+                              size={14}
+                              className="mr-2 text-white flex-shrink-0"
+                            />
+                            <span>{formatDate(user.date_of_birth)}</span>
+                          </div>
+                        </td>
+                        <td className="w-28 px-4 py-4">
+                          <div className="flex items-center">
+                            <DollarSign
+                              size={14}
+                              className="mr-1 text-green-500 flex-shrink-0"
+                            />
+                            <span className="text-sm font-semibold text-green-600">
+                              ${user.salary}
+                            </span>
+                          </div>
+                        </td>
+                        <td className="w-32 px-4 py-4">
+                          <span className="text-sm text-white">
+                            {formatDate(user.created_at)}
+                          </span>
+                        </td>
+                        <td className="w-32 px-4 py-4">
+                          <div className="flex space-x-2">
+                            <button
+                              onClick={() => {
+                                setCurrentUser(user);
+                                setShowEditModal(true);
+                              }}
+                              className="bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white p-2 rounded-lg cursor-pointer shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                              title="Edit User"
+                            >
+                              <Edit size={16} />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setCurrentUser(user);
+                                setShowDeleteModal(true);
+                              }}
+                              className="bg-gradient-to-r cursor-pointer from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white p-2 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg transform hover:scale-105"
+                              title="Delete User"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
 
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="px-6 py-4 stat-bd border-t border-gray-200">
+                <div className="flex items-center justify-between">
+                  {/* Pagination Info */}
+                  <div className="text-sm text-gray-600">
+                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, totalUsers)} of {totalUsers} entries
+                  </div>
+
+                  {/* Pagination Controls */}
+                  <div className="flex items-center space-x-1">
+                    {/* First Page */}
+                    <button
+                      onClick={goToFirstPage}
+                      disabled={currentPage === 1}
+                      className="pagination-button p-2 rounded-lg bg-white text-gray-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="First Page"
+                    >
+                      <ChevronsLeft size={16} />
+                    </button>
+
+                    {/* Previous Page */}
+                    <button
+                      onClick={goToPrevPage}
+                      disabled={currentPage === 1}
+                      className="pagination-button p-2 rounded-lg bg-white text-gray-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Previous Page"
+                    >
+                      <ChevronLeft size={16} />
+                    </button>
+
+                    {/* Page Numbers */}
+                    {getPageNumbers().map((pageNumber) => (
+                      <button
+                        key={pageNumber}
+                        onClick={() => handlePageChange(pageNumber)}
+                        className={`pagination-button px-3 py-2 rounded-lg text-sm font-medium ${
+                          currentPage === pageNumber
+                            ? 'active'
+                            : 'bg-white text-gray-600 hover:bg-blue-50'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    ))}
+
+                    {/* Show ellipsis if there are more pages */}
+                    {currentPage + 2 < totalPages && (
+                      <span className="px-3 py-2 text-gray-500">...</span>
+                    )}
+
+                    {/* Show last page if not in range */}
+                    {currentPage + 2 < totalPages && (
+                      <button
+                        onClick={() => handlePageChange(totalPages)}
+                        className="pagination-button px-3 py-2 rounded-lg text-sm font-medium bg-white text-gray-600 hover:bg-blue-50"
+                      >
+                        {totalPages}
+                      </button>
+                    )}
+
+                    {/* Next Page */}
+                    <button
+                      onClick={goToNextPage}
+                      disabled={currentPage === totalPages}
+                      className="pagination-button p-2 rounded-lg bg-white text-gray-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Next Page"
+                    >
+                      <ChevronRight size={16} />
+                    </button>
+
+                    {/* Last Page */}
+                    <button
+                      onClick={goToLastPage}
+                      disabled={currentPage === totalPages}
+                      className="pagination-button p-2 rounded-lg bg-white text-gray-600 hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      title="Last Page"
+                    >
+                      <ChevronsRight size={16} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Table Footer */}
             <div className="px-6 py-4 stat-bd">
               <div className="flex items-center justify-between text-sm text-gray-600">
-                <span>Showing {users.length} users</span>
+                <span>Total {users.length} users</span>
                 <span>Last updated: {new Date().toLocaleString()}</span>
               </div>
             </div>
