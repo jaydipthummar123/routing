@@ -451,9 +451,9 @@ const UserTab = () => {
               <table className="w-full table-fixed">
                 <thead>
                   <tr className="stat-bd text-white">
-                    <th className="w-20 px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
+                    {/* <th className="w-20 px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
                       <div className="flex items-center gap-2">ID</div>
-                    </th>
+                    </th> */}
                     <th className="w-48 px-4 py-4 text-left font-semibold text-sm uppercase tracking-wider">
                       <div className="flex items-center gap-2">
                         <User size={16} />
@@ -516,11 +516,11 @@ const UserTab = () => {
                   ) : (
                     currentUsers.map((user, index) => (
                       <tr key={user.id} className="stat-bd duration-200">
-                        <td className="w-20 px-4 py-4">
+                        {/* <td className="w-20 px-4 py-4">
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                             #{user.id}
                           </span>
-                        </td>
+                        </td> */}
                         <td className="w-48 px-4 py-4">
                           <div className="flex items-center">
                             <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center text-white font-semibold mr-3 flex-shrink-0">
