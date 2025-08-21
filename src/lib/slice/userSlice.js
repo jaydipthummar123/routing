@@ -1,21 +1,37 @@
-import { createSlice } from "@reduxjs/toolkit";
 
+export const userApi = createApi({
+  reducerPath: "userApi",
+  baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:8080/jp/blog/" }),
+  tagTypes: ["User"],
+  endpoints: (builder) => ({
+    getUser: builder.query({
+      query: () => "user",
+      providesTags: ["User"],
+    }),
+    createUser: builder.mutation({
+      query: (userdata) => ({
+        url: 'user',
+        method: 'POST',
+        body: userdata
+      }),
+      invalidatesTags: ["User"],
+    }),
+    updateUser: builder.mutation({
+      query: ({ id, ...data }) => ({
+        url: `user/${id}`,
+        method: "PUT",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+      deleteUser: builder.mutation({
+      query: (id) => ({
+        url: `user/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"],
+    }),
+  }),
+});
 
-const initialState = {
-  user : [] ,
-  isLoding : false,
-  error : null
-} ;
-
-const userReducer  = createSlice({
-  name:"user",
-  initialState,
-  reducers : {
-    setUser :(state ,action)=>{
-        state.user = action.payload
-    },
-  }
-})
-
- export const {setUser} = userReducer.actions ;
- export default userReducer.reducer;
+export const { useGetUserQuery, useCreateUserMutation, useUpdateUserMutation ,useDeleteUserMutation } = userApi;
