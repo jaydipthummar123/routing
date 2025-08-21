@@ -14,75 +14,68 @@ import {
   ChevronsRight,
 } from "lucide-react";
 import Modal from "../components/Ui/Modal";
-import FormField from "../components/Ui/FormField";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  createUser,
-  deleteUser,
-  getUser,
-  updateUser,
-} from "../lib/thunk/userThunk";
+import FormField from "../components/Ui/FormField"
 import { Formik, Form } from "formik";
 import { userSchema } from "../validation/userValidation";
 import { toast } from "react-toastify";
+import {
+  useCreateUserMutation,
+  useDeleteUserMutation,
+  useGetUserQuery,
+  useUpdateUserMutation,
+} from "../lib/slice/userSlice";
 
 const UserTab = () => {
-  const users = useSelector((state) => state.user.user);
-  const dispatch = useDispatch();
-
+  const { data, error, isLoading } = useGetUserQuery();
+  const users = data?.result?.users;
+  const [createUser, { isLoading: creating }] = useCreateUserMutation();
+  const [updateUser] = useUpdateUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const [usersPerPage, setUsersPerPage] = useState(10);
-
+  const [usersPerPage, setUsersPerPage] = useState(5);
   const formatDate = (dateString) => new Date(dateString).toLocaleDateString();
-  useEffect(() => {
-    dispatch(getUser());
-  }, []);
-
   const handleDeleteUser = async () => {
-    console.log("Deleting user:", currentUser);
     try {
-      await dispatch(deleteUser(currentUser.id)).unwrap();
+      await deleteUser(currentUser.id).unwrap();
       toast.success("User deleted successfully!");
       setShowDeleteModal(false);
-      
-      // Adjust current page if necessary after deletion
-      const totalPages = Math.ceil((users.length - 1) / usersPerPage);
+      const totalPages = Math.ceil((users?.length - 1) / usersPerPage);
       if (currentPage > totalPages && totalPages > 0) {
         setCurrentPage(totalPages);
       }
-    } catch (error) {
-      toast.error(error || "Failed to delete user!");
+    } catch (e) {
+      if (e?.data?.message) {
+        toast.error(e.data.message);
+      } else {
+        toast.error("Failed to delete user!");
+      }
     }
   };
-
   // Calculate pagination
-  const totalUsers = users.length;
+  const totalUsers = users?.length;
   const totalPages = Math.ceil(totalUsers / usersPerPage);
   const indexOfLastUser = currentPage * usersPerPage;
   const indexOfFirstUser = indexOfLastUser - usersPerPage;
-  const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-
+  const currentUsers = users?.slice(indexOfFirstUser, indexOfLastUser);
   // Pagination handlers
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
-
   const handlePerPageChange = (newPerPage) => {
     setUsersPerPage(newPerPage);
     setCurrentPage(1); // Reset to first page when changing items per page
   };
-
   const goToFirstPage = () => setCurrentPage(1);
   const goToLastPage = () => setCurrentPage(totalPages);
-  const goToPrevPage = () => setCurrentPage(prev => Math.max(prev - 1, 1));
-  const goToNextPage = () => setCurrentPage(prev => Math.min(prev + 1, totalPages));
-
+  const goToPrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const goToNextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
   // Generate page numbers for pagination
   const getPageNumbers = () => {
     const delta = 2;
@@ -96,7 +89,6 @@ const UserTab = () => {
 
     return pages;
   };
-
   return (
     <>
       <style jsx>{`
@@ -365,28 +357,33 @@ const UserTab = () => {
               {[
                 {
                   label: "Total Users",
-                  value: users.length,
+                  value: users?.length,
                   icon: User,
                   color: "blue",
                 },
                 {
                   label: "Male Users",
-                  value: users.filter((u) => u.gender === "Male").length,
+                  value: users?.filter((u) => u.gender === "Male")?.length,
                   icon: User,
                   color: "green",
                 },
                 {
                   label: "Female Users",
-                  value: users.filter((u) => u.gender === "Female").length,
+                  value: users?.filter((u) => u.gender === "Female").length,
                   icon: User,
                   color: "blue",
                 },
                 {
                   label: "Avg Salary",
-                  value: users.length > 0 ? `$${(
-                    users.reduce((acc, u) => acc + parseFloat(u.salary), 0) /
-                    users.length
-                  ).toFixed(2)}` : '$0.00',
+                  value:
+                    users?.length > 0
+                      ? `$${(
+                          users?.reduce(
+                            (acc, u) => acc + parseFloat(u.salary),
+                            0
+                          ) / users?.length
+                        ).toFixed(2)}`
+                      : "$0.00",
                   icon: DollarSign,
                   color: "green",
                 },
@@ -423,17 +420,19 @@ const UserTab = () => {
                   <div className="w-3 h-3 rounded-full bg-red-500 animate-pulse"></div>
                   <div className="w-3 h-3 rounded-full bg-yellow-500 animate-pulse"></div>
                   <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-                  <span className="ml-4 text-2xl font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent ">
+                  <span className="ml-4 text-2xl font-semibold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
                     User Database
                   </span>
                 </div>
-                
+
                 {/* Items per page selector */}
                 <div className="flex items-center gap-2">
                   <label className="text-sm text-gray-600">Show:</label>
                   <select
                     value={usersPerPage}
-                    onChange={(e) => handlePerPageChange(Number(e.target.value))}
+                    onChange={(e) =>
+                      handlePerPageChange(Number(e.target.value))
+                    }
                     className="px-3 py-1 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
                   >
                     <option value={5}>5</option>
@@ -497,13 +496,20 @@ const UserTab = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {currentUsers.length === 0 ? (
+                  {!currentUsers?.length ? (
                     <tr>
-                      <td colSpan={8} className="px-6 py-12 text-center stat-bd">
+                      <td
+                        colSpan={8}
+                        className="px-6 py-12 text-center stat-bd"
+                      >
                         <div className="flex flex-col items-center">
                           <User className="w-12 h-12 text-gray-400 mb-4" />
-                          <p className="text-lg text-gray-500 mb-2">No users found</p>
-                          <p className="text-sm text-gray-400">Start by creating your first user</p>
+                          <p className="text-lg text-gray-500 mb-2">
+                            No users found
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            Start by creating your first user
+                          </p>
                         </div>
                       </td>
                     </tr>
@@ -611,7 +617,9 @@ const UserTab = () => {
                 <div className="flex items-center justify-between">
                   {/* Pagination Info */}
                   <div className="text-sm text-gray-600">
-                    Showing {indexOfFirstUser + 1} to {Math.min(indexOfLastUser, totalUsers)} of {totalUsers} entries
+                    Showing {indexOfFirstUser + 1} to{" "}
+                    {Math.min(indexOfLastUser, totalUsers)} of {totalUsers}{" "}
+                    entries
                   </div>
 
                   {/* Pagination Controls */}
@@ -643,8 +651,8 @@ const UserTab = () => {
                         onClick={() => handlePageChange(pageNumber)}
                         className={`pagination-button px-3 py-2 rounded-lg text-sm font-medium ${
                           currentPage === pageNumber
-                            ? 'active'
-                            : 'bg-white text-gray-600 hover:bg-blue-50'
+                            ? "active"
+                            : "bg-white text-gray-600 hover:bg-blue-50"
                         }`}
                       >
                         {pageNumber}
@@ -693,7 +701,7 @@ const UserTab = () => {
             {/* Table Footer */}
             <div className="px-6 py-4 stat-bd">
               <div className="flex items-center justify-between text-sm text-gray-600">
-                <span>Total {users.length} users</span>
+                <span>Total {users?.length} users</span>
                 <span>Last updated: {new Date().toLocaleString()}</span>
               </div>
             </div>
@@ -718,12 +726,16 @@ const UserTab = () => {
           validationSchema={userSchema}
           onSubmit={async (values, { resetForm }) => {
             try {
-              await dispatch(createUser(values)).unwrap();
+              await createUser(values).unwrap();
               toast.success("User created successfully!");
               resetForm();
               setShowCreateModal(false);
-            } catch (error) {
-              toast.error(error || "Failed to create user!");
+            } catch (e) {
+              if (e?.data?.message) {
+                toast.error(e.data.message);
+              } else {
+                toast.error("Failed to delete user!");
+              }
             }
           }}
         >
@@ -760,10 +772,11 @@ const UserTab = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={creating || isSubmitting}
                   className="button-3d px-4 py-2 bg-gradient-to-r cursor-pointer from-blue-500 to-purple-600 text-white rounded-lg flex items-center gap-2"
                 >
-                  <Check size={16} /> Create User
+                  <Check size={16} />{" "}
+                  {creating ? "Submiting...." : "Create User"}
                 </button>
               </div>
             </Form>
@@ -771,7 +784,7 @@ const UserTab = () => {
         </Formik>
       </Modal>
 
-      {/* ✅ Edit User Modal */}
+      {/*  Edit User Modal */}
       <Modal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
@@ -786,18 +799,20 @@ const UserTab = () => {
               date_of_birth: currentUser.date_of_birth || "",
               salary: currentUser.salary || "",
             }}
-            enableReinitialize // ✅ Important: re-fill when currentUser changes
+            enableReinitialize
             validationSchema={userSchema}
             onSubmit={async (values, { resetForm }) => {
               try {
-                await dispatch(
-                  updateUser({ id: currentUser.id, ...values })
-                ).unwrap();
+                await updateUser({ id: currentUser.id, ...values }).unwrap();
                 toast.success("User updated successfully!");
                 resetForm();
                 setShowEditModal(false);
-              } catch (error) {
-                toast.error(error || "Failed to update user!");
+              } catch (e) {
+                if (e?.data?.message) {
+                  toast.error(e.data.message);
+                } else {
+                  toast.error("Failed to delete user!");
+                }
               }
             }}
           >
